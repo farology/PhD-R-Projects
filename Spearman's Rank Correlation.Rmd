@@ -1,0 +1,59 @@
+---
+# Title: "Coding lines to test Spearman’s rank correlations (rs) between root traits and correlogram visualisation in R language. "
+---
+
+# loading files into the R environment, specifying the header is present, 
+files located on desktop file 
+Spearman_Dataset <- read.csv(
+ file.choose(), 
+ header=T
+ ) 
+ 
+# attach the data 
+attach(Spearman_Dataset) 
+
+# review Spearman_Dataset 
+Pearson_Dataset 
+
+# review variable names 
+names(Spearman_Dataset) 
+
+# loading packages, install first if not installed yet 
+library(Hmisc) 
+library(corrplot) 
+
+# correlations using rcorr() with p-values 
+# X being selected columns in dataset
+Mcor <- rcorr(as.matrix(
+ Pearson_Dataset[,X]), 
+ type=“spearman” 
+ ) 
+ 
+# flattenCorrMatrix - obtained from sthda.com website 
+# cormat : matrix of the correlation coefficients 
+# pmat : matrix of the correlation p-values 
+flattenCorrMatrix <- function(cormat, pmat) { 
+ ut <- upper.tri(cormat) 
+ data.frame( 
+ row = rownames(cormat)[row(cormat)[ut]], 
+ column = rownames(cormat)[col(cormat)[ut]], 
+ cor =(cormat)[ut], 
+ p = pmat[ut] 
+ ) 
+} 
+
+#table of R and p values 
+flattenCorrMatrix(Mcor$r, Mcor$P) 
+
+#printing the correlation matrix 
+Mcor1 <- signif(Mcor$r, 2) 
+
+#printing the p-values of the correlations 
+Mcor2 <- signif(Mcor$P, 2) 
+181
+
+#visualisation of corrplot() and its modifications 
+corrplot.mixed(Mcor1, 
+ upper = "circle", order = "AOE", 
+ lower = "number", p.mat = Mcor2, sig.level = 0.05
+ ) 

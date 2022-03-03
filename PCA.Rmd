@@ -1,0 +1,60 @@
+---
+# Title: "Coding lines of principal component analysis (PCA) using R."
+---
+
+#define and locate file path 
+path <- file.path("~", "Desktop", "PCA.csv") 
+path 
+
+#load file into R 
+PCA <- read.table(path, 
+ header = T, 
+ sep = "," 
+ )
+ 
+#read file 
+PCA 
+
+#Applying PCAnalysis on data 
+dataPCA <- princomp(PCA) 
+dataPCA$loadings 
+screeplot(dataPCA, type = 'line', main = 'Scree Plot for SerxSal') 
+
+#Apply Kaiser-Guttman criterion 
+ev <- dataPCA$sdev^2 
+
+# Plot eigenvalues and percentages of variation of an ordination object 
+# Kaiser rule and broken stick model 
+# Usage:
+# evplot(ev) 
+# where ev is a vector of eigenvalues 
+# License: GPL-2 
+# Author: Francois Gillet, 25 August 2012 
+evplot <- function(ev) 
+{ 
+ # Broken stick model (MacArthur 1957) 
+ n <- length(ev) 
+ bsm <- data.frame(j=seq(1:n), p=0) 
+ bsm$p[1] <- 1/n 
+ for (i in 2:n) bsm$p[i] <- bsm$p[i-1] + (1/(n + 1 - i)) 
+ bsm$p <- 100*bsm$p/n 
+ # Plot eigenvalues and % of variation for each axis 
+ op <- par(mfrow=c(2,1)) 
+ barplot(ev, main="Eigenvalues", col="bisque", las=2) 
+ abline(h=mean(ev), col="red") 
+ legend("topright", "Average eigenvalue", lwd=1, col=2, bty="n") 
+ barplot(t(cbind(100*ev/sum(ev), bsm$p[n:1])), beside=TRUE, 
+ main="% variation", col=c("bisque",2), las=2) 
+ legend("topright", c("% eigenvalue", "Broken stick model"), 
+ pch=15, col=c("bisque",2), bty="n") 
+ par(op) 
+} 
+evplot(ev) 
+185
+
+#Plot PCA 
+library(ggplot2) 
+library(ggfortify) 
+autoplot(princomp(PCA), data = PCA, colour = 'grey', loadings = T, 
+loadings.colour = 'blue', loadings.label = T, loadings.label.size = 5, label.size 
+= 3, xlab = "PC1: 75.2% of variation", ylab = "PC2: 15.6% of variation”)

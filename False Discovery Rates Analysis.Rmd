@@ -1,0 +1,27 @@
+---
+# Title: "Coding lines of Benjamini-Hochberg false discovery rates (FDR) multiple comparison test for non-parametric QTL analysis using R."
+---
+
+# Data input
+# X is P-values of K* values from KW analysis 
+Input = ("X") 
+ 
+# Data into table object 
+Data = read.table(textConnection(Input), 
+ header=T) 
+ 
+# review data 
+headtail(Data) 
+
+# load package 
+library(FSA) 
+
+# Obtained adjusted P value 
+# Y = length of data
+Data$BH = signif(p.adjust(Data$Raw.P, 
+ method = "BH"), 
+n = Y) 
+ 
+
+# Show locus with adjusted P values
+View(Data)
