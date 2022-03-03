@@ -22,6 +22,5 @@ Data$BH = signif(p.adjust(Data$Raw.P,
  method = "BH"), 
 n = Y) 
  
-
 # Show locus with adjusted P values
 View(Data)
